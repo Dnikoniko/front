@@ -71,9 +71,8 @@ export default function Prologue() {
             w-full max-w-2xl
             h-[min(70dvh,28rem)]
             sm:h-[min(65dvh,32rem)]
-            bg-amber-100/70
-            border border-white/20
-            rounded-xl
+            bg-[url('/images/text_bg.png')]
+            bg-cover bg-center
             p-5 sm:p-6 md:p-8
             flex flex-col
             justify-start
@@ -98,7 +97,7 @@ export default function Prologue() {
                 key={`${part}-${index}`}
                 className="
                   w-full
-                  text-base sm:text-[16px] md:text-xl
+                  text-base sm:text-[1.6rem] md:text-xl
                   leading-relaxed sm:leading-loose
                   text-left
                   animate-dialogue
