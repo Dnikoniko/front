@@ -92,20 +92,24 @@ export default function Prologue() {
               }
             `}
           >
-            {displayedLines.map((text, index) => (
-              <p
-                key={`${part}-${index}`}
-                className="
+            {displayedLines.map((text, index) => {
+              const isDialogue = text.startsWith("「") && text.endsWith("」");
+
+              return (
+                <p
+                  key={`${part}-${index}`}
+                  className={`
                   w-full
                   text-base sm:text-[1.6rem] md:text-xl
                   leading-relaxed sm:leading-loose
-                  text-left
+                  ${isDialogue ? "text-center" : "text-left"}
                   animate-dialogue
-                "
-              >
-                {text}
-              </p>
-            ))}
+                `}
+                >
+                  {text}
+                </p>
+              );
+            })}
           </div>
         </div>
 
