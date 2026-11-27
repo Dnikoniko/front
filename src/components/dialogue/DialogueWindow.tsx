@@ -74,7 +74,7 @@ export default function DialogueWindow({ isOpen, story }: Props) {
   return (
     <>
       {currentStep.type === "text" && (
-        <div className="fixed inset-0 z-40 flex items-end justify-center bg-black/50 p-4 pb-10">
+        <div className="fixed inset-0 z-40 flex items-end justify-center p-4 pb-10">
           <DialogueText
             name={currentStep.name}
             text={currentStep.text.slice(0, visibleChars)}
