@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { characters } from "@/components/characters/data/characters";
 
 export default function PickerPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -17,15 +19,15 @@ export default function PickerPage() {
 
   const previewColorRef = useRef<string | null>(null);
 
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+
   useEffect(() => {
     let stream: MediaStream | null = null;
 
     const startCamera = async () => {
       try {
         stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: "environment",
-          },
+          video: { facingMode: "environment" },
           audio: false,
         });
 
@@ -70,7 +72,6 @@ export default function PickerPage() {
     );
 
     const xOffset = (video.videoWidth * scale - rect.width) / 2;
-
     const yOffset = (video.videoHeight * scale - rect.height) / 2;
 
     const x = Math.floor((clientX - rect.left + xOffset) / scale);
@@ -100,7 +101,6 @@ export default function PickerPage() {
 
   const handlePointerDown = (event: React.PointerEvent<HTMLVideoElement>) => {
     event.preventDefault();
-
     event.currentTarget.setPointerCapture(event.pointerId);
 
     setIsPicking(true);
@@ -121,6 +121,32 @@ export default function PickerPage() {
     setIsPicking(false);
     setPreviewColor(null);
     previewColorRef.current = null;
+  };
+
+  const handleGetColor = () => {
+    if (!color) return;
+
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirmColor = () => {
+    if (!color) return;
+
+    const storedColors = sessionStorage.getItem("dwarfColors");
+
+    const currentColors = storedColors
+      ? JSON.parse(storedColors)
+      : characters.find((character) => character.id === "dwarf")!.colors;
+
+    // 帽子の色だけ変更
+    const updatedColors = currentColors.map(
+      (part: { id: string; color: string }) =>
+        part.id === "hat" ? { ...part, color } : part,
+    );
+
+    sessionStorage.setItem("dwarfColors", JSON.stringify(updatedColors));
+
+    setIsConfirmOpen(false);
   };
 
   return (
@@ -152,27 +178,72 @@ export default function PickerPage() {
         >
           <div
             className="h-10 w-10 rounded border border-gray-300"
-            style={{
-              backgroundColor: previewColor,
-            }}
+            style={{ backgroundColor: previewColor }}
           />
-
           <span className="text-sm font-bold text-black">{previewColor}</span>
         </div>
       )}
 
-      <div className="mt-4 flex">
+      <div className="mt-4 flex items-center gap-4">
         <div
           className="h-[100px] w-[100px] border border-gray-300"
-          style={{
-            backgroundColor: color ?? "white",
-          }}
+          style={{ backgroundColor: color ?? "white" }}
         />
 
-        <p className="mt-2 text-base">カラーコード：{color ?? "未取得"}</p>
+        <div>
+          <p className="text-base">カラーコード：{color ?? "未取得"}</p>
+
+          <button
+            type="button"
+            onClick={handleGetColor}
+            disabled={!color}
+            className="mt-2 rounded-lg bg-black px-6 py-2 font-bold text-white disabled:opacity-30"
+          >
+            GET！
+          </button>
+        </div>
       </div>
 
       <canvas ref={canvasRef} hidden />
+      {isConfirmOpen && color && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+            <h2 className="text-center text-xl font-bold text-black">
+              この色でいいですか？
+            </h2>
+
+            <div className="my-6 flex flex-col items-center gap-3">
+              <div
+                className="h-24 w-24 rounded-xl border border-gray-300"
+                style={{ backgroundColor: color }}
+              />
+
+              <p className="font-bold text-black">{color}</p>
+
+              <p className="text-sm text-gray-600">
+                この色を小人の帽子に使用します。
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setIsConfirmOpen(false)}
+                className="flex-1 rounded-lg border border-gray-300 py-3 font-bold text-black"
+              >
+                やり直す
+              </button>
+              <Link
+                href="/ArPage?story=thanks"
+                onClick={handleConfirmColor}
+                className="flex-1 rounded-lg bg-black py-3 text-center font-bold text-white"
+              >
+                決定する
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

@@ -6,6 +6,7 @@ import * as THREE from "three";
 
 import { createCharacterSprite } from "./CharacterSprite";
 import { characters } from "@/components/characters/data/characters";
+import { PartColor } from "@/components/characters/types/character";
 
 type XR8Api = {
   GlTextureRenderer: {
@@ -198,17 +199,34 @@ export default function ArCamera({
 
         onStart: () => {
           const { scene } = XR8.Threejs.xrScene();
+
           const dwarf = characters.find(
             (character) => character.id === "dwarf",
           );
 
-          createCharacterSprite(scene, dwarf?.colors ?? [])
+          // 初期色を取得
+          let colors: PartColor[] = dwarf?.colors ?? [];
+
+          // カメラ色選択画面で保存した色を取得
+          try {
+            const storedColors = sessionStorage.getItem("dwarfColors");
+
+            if (storedColors) {
+              colors = JSON.parse(storedColors) as PartColor[];
+            }
+          } catch (error) {
+            console.error("保存したキャラクターカラーの読み込みに失敗:", error);
+          }
+
+          // 保存された色でドワーフを生成
+          createCharacterSprite(scene, colors)
             .then((sprite) => {
               spriteRef.current = sprite;
 
               onStatusChange("床にカメラを向けて、好きな場所をタップ！");
 
               console.log("小人読み込み完了");
+              console.log("適用カラー:", colors);
             })
             .catch((error) => {
               console.error("キャラクター読み込みエラー:", error);
