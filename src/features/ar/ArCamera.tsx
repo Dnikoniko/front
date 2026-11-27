@@ -5,6 +5,7 @@ import type { PointerEvent } from "react";
 import * as THREE from "three";
 
 import { createCharacterSprite } from "./CharacterSprite";
+import { characters } from "@/components/characters/data/characters";
 
 type XR8Api = {
   GlTextureRenderer: {
@@ -197,22 +198,24 @@ export default function ArCamera({
 
         onStart: () => {
           const { scene } = XR8.Threejs.xrScene();
+          const dwarf = characters.find(
+            (character) => character.id === "dwarf",
+          );
 
-          createCharacterSprite(scene)
+          createCharacterSprite(scene, dwarf?.colors ?? [])
             .then((sprite) => {
               spriteRef.current = sprite;
 
               onStatusChange("床にカメラを向けて、好きな場所をタップ！");
 
-              console.log("キャラクター読み込み完了");
+              console.log("小人読み込み完了");
             })
             .catch((error) => {
               console.error("キャラクター読み込みエラー:", error);
-              onStatusChange("character.pngを読み込めませんでした");
+              onStatusChange("小人を読み込めませんでした");
             });
         },
       };
-
       // ARパイプライン登録
       XR8.addCameraPipelineModules([
         XR8.GlTextureRenderer.pipelineModule(),
@@ -294,12 +297,8 @@ export default function ArCamera({
 
     placedRef.current = true;
 
-    console.log("犬の配置完了");
-
     // 親コンポーネントに通知
     onCharacterPlaced();
-
-    onStatusChange("警官ぽめが現れた！");
   }
 
   return (
