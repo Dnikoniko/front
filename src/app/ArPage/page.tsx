@@ -1,14 +1,25 @@
 "use client";
 
+import DialogueWindow from "@/components/dialogue/DialogueWindow";
 import ArCamera from "@/features/ar/ArCamera";
-import DialogueWindow from "@/features/dialogue/DialogueWindow";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { createPortal } from "react-dom";
+import { useSearchParams } from "next/navigation";
+import { THANKS_STORY } from "@/components/dialogue/stories/thanksStory";
+import { REQUEST_STORY } from "@/components/dialogue/stories/requestStory";
 
-export default function Home() {
+function HomeContent() {
+  const searchParams = useSearchParams();
+
+  // URLからストーリーの種類を取得
+  const storyType = searchParams.get("story");
+
+  // ストーリーを切り替える
+  const currentStory = storyType === "thanks" ? THANKS_STORY : REQUEST_STORY;
+
   const [mounted, setMounted] = useState(false);
 
-  // 犬を配置したかどうか
+  // キャラクターを配置したかどうか
   const [characterPlaced, setCharacterPlaced] = useState(false);
 
   // ステータス
@@ -19,25 +30,22 @@ export default function Home() {
   }, []);
 
   function handleCharacterPlaced() {
-    console.log("page.tsx：犬の配置通知を受け取りました");
+    console.log("page.tsx：キャラクターの配置通知を受け取りました");
 
     setCharacterPlaced(true);
-    setStatus("警官ぽめが現れた！");
+    setStatus("キャラクター出現中！");
   }
 
   return (
     <main className="fixed inset-0 h-[100dvh] w-[100vw] overflow-hidden bg-black">
-      {/* ARカメラ */}
       <ArCamera
         onCharacterPlaced={handleCharacterPlaced}
         onStatusChange={setStatus}
       />
 
-      {/* UIをdocument.body直下に描画 */}
       {mounted &&
         createPortal(
           <>
-            {/* 上部ステータス */}
             <div
               style={{
                 position: "fixed",
@@ -52,11 +60,19 @@ export default function Home() {
                 {status}
               </p>
             </div>
-            {/* 会話ウィンドウ */}
-            <DialogueWindow isOpen={characterPlaced} />
+
+            <DialogueWindow isOpen={characterPlaced} story={currentStory} />
           </>,
           document.body,
         )}
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={null}>
+      <HomeContent />
+    </Suspense>
   );
 }

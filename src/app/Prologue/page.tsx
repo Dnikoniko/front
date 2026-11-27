@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 const STORY_PARTS = [
@@ -148,10 +149,10 @@ export default function Prologue() {
             <p className="text-sm sm:text-base mb-8">
               ……声のする方を、探してみる？
             </p>
-
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="
+            <Link href="/ar?story=request">
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="
                 px-8 py-3
                 bg-[#D9CDAF]
                 border border-white/40
@@ -161,9 +162,10 @@ export default function Prologue() {
                 transition
                 cursor-pointer
               "
-            >
-              探してみる
-            </button>
+              >
+                探してみる
+              </button>
+            </Link>
           </div>
         </div>
       )}
