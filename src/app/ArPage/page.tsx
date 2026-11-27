@@ -8,7 +8,7 @@ import { createPortal } from "react-dom";
 export default function Home() {
   const [mounted, setMounted] = useState(false);
 
-  // 犬を配置したかどうか
+  // キャラクターを配置したかどうか
   const [characterPlaced, setCharacterPlaced] = useState(false);
 
   // ステータス
@@ -19,25 +19,22 @@ export default function Home() {
   }, []);
 
   function handleCharacterPlaced() {
-    console.log("page.tsx：犬の配置通知を受け取りました");
+    console.log("page.tsx：キャラクターの配置通知を受け取りました");
 
     setCharacterPlaced(true);
-    setStatus("警官ぽめが現れた！");
+    setStatus("キャラクター出現中！");
   }
 
   return (
     <main className="fixed inset-0 h-[100dvh] w-[100vw] overflow-hidden bg-black">
-      {/* ARカメラ */}
       <ArCamera
         onCharacterPlaced={handleCharacterPlaced}
         onStatusChange={setStatus}
       />
 
-      {/* UIをdocument.body直下に描画 */}
       {mounted &&
         createPortal(
           <>
-            {/* 上部ステータス */}
             <div
               style={{
                 position: "fixed",
@@ -52,7 +49,6 @@ export default function Home() {
                 {status}
               </p>
             </div>
-            {/* 会話ウィンドウ */}
             <DialogueWindow isOpen={characterPlaced} />
           </>,
           document.body,
