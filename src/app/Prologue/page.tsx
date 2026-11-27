@@ -149,7 +149,7 @@ export default function Prologue() {
             <p className="text-sm sm:text-base mb-8">
               ……声のする方を、探してみる？
             </p>
-            <Link href="/ArPage">
+            <Link href="/ar?story=request">
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="

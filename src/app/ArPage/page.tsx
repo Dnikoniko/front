@@ -1,11 +1,22 @@
 "use client";
 
+import DialogueWindow from "@/components/dialogue/DialogueWindow";
 import ArCamera from "@/features/ar/ArCamera";
-import DialogueWindow from "@/features/dialogue/DialogueWindow";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { createPortal } from "react-dom";
+import { useSearchParams } from "next/navigation";
+import { THANKS_STORY } from "@/components/dialogue/stories/thanksStory";
+import { REQUEST_STORY } from "@/components/dialogue/stories/requestStory";
 
-export default function Home() {
+function HomeContent() {
+  const searchParams = useSearchParams();
+
+  // URLからストーリーの種類を取得
+  const storyType = searchParams.get("story");
+
+  // ストーリーを切り替える
+  const currentStory = storyType === "thanks" ? THANKS_STORY : REQUEST_STORY;
+
   const [mounted, setMounted] = useState(false);
 
   // キャラクターを配置したかどうか
@@ -49,10 +60,19 @@ export default function Home() {
                 {status}
               </p>
             </div>
-            <DialogueWindow isOpen={characterPlaced} />
+
+            <DialogueWindow isOpen={characterPlaced} story={currentStory} />
           </>,
           document.body,
         )}
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={null}>
+      <HomeContent />
+    </Suspense>
   );
 }

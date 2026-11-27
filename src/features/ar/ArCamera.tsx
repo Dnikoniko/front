@@ -303,7 +303,6 @@ export default function ArCamera({
 
   return (
     <>
-      {/* ARカメラ */}
       <canvas
         ref={canvasRef}
         onPointerDown={placeCharacter}
@@ -317,7 +316,6 @@ export default function ArCamera({
         }}
       />
 
-      {/* AR開始ボタン */}
       {!started && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60">
           <button
