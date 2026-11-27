@@ -309,7 +309,7 @@ export default function ArCamera({
       return;
     }
 
-    // 犬を配置
+    // キャラクターを配置
     spriteRef.current.position.set(point.x, 0.5, point.z);
     spriteRef.current.visible = true;
 
